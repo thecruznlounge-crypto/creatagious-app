@@ -104,7 +104,7 @@
   function endCard(c, W, H, p, u, hi, a) {
     c.save(); c.globalAlpha = a; const g = c.createLinearGradient(0, H * .5, 0, H); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.72)'); c.fillStyle = g; c.fillRect(0, 0, W, H); A.setHead(p.font);
     const y = H * .82; if (p.detail) { c.font = `700 ${u * 3.8}px Inter, Arial`; c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.fillText(p.detail, W / 2, y - u * 2); }
-    if (p.cta) A.drawButton(c, p.cta, W / 2, y, u * 1.15, 'center', hi); c.restore();
+    if (p.cta) A.drawButton(c, p.cta, W / 2, y - (String(p.ctaHandle || '').trim() ? u * 5 : 0), u * 1.15, 'center', hi, p); c.restore();
   }
   function draw(c, W, H, p, poster, sec) {
     A.setHead(p.font); const tl = A.content.timeline(p), s = Math.min(p.duration - .001, Math.max(0, sec)), cur = tl.find((x) => s < x.start + x.len) || tl[tl.length - 1], lt = s - cur.start, u = Math.min(W, H) / 100, T = A.tpl(p.template), hi = p.accent || T.accent, prev = tl[cur.i - 1], tr = p.trans || 'cut', TD = .3, q = clamp(lt / TD), inTr = prev && lt < TD && tr !== 'cut', title = cur.s.title;
@@ -124,7 +124,7 @@
     if (p.style === 'top3' && /^Reason/.test(title)) { const n = title.slice(-1); c.font = `400 ${u * 34}px ${A.fontFam(p.font)}`; c.textAlign = 'left'; c.textBaseline = 'top'; c.lineWidth = u * 1.2; c.strokeStyle = 'rgba(0,0,0,.7)'; c.strokeText(n, u * 7, top); c.fillStyle = hi; c.fillText(n, u * 7, top); }
     if (bb) label('BEFORE', u * 6, top, '#FFFFFF'); if (ba) label('AFTER', u * 6, top, hi);
     if (p.style === 'review' && title === 'Quote') { c.font = `400 ${u * 30}px "Lora Bold", Georgia, serif`; c.fillStyle = hi; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText('“', u * 6, H * .48); }
-    if (!bb) { const isEnd = cur.i === tl.length - 1; if (isEnd) endCard(c, W, H, p, u, hi, ease(lt / .35)); caption(c, W, H, isEnd ? { ...p, capPos: 'middle' } : p, cur.s.text, lt, cur.len, hi); }
+    if (!bb) { const isEnd = cur.i === tl.length - 1; if (isEnd) endCard(c, W, H, p, u, hi, ease(lt / .35)); else A.drawCtaBar(c, W, H, p, u, hi); caption(c, W, H, isEnd ? { ...p, capPos: 'middle' } : p, cur.s.text, lt, cur.len, hi); }
     if (p.brand && !p.logo) { c.font = `800 ${u * 3}px Inter, Arial`; c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'top'; c.fillText(p.brand.toUpperCase(), W / 2, u * 5.5); }
     if (p.progress !== false) { c.fillStyle = 'rgba(255,255,255,.3)'; c.fillRect(0, 0, W, u * .8); c.fillStyle = hi; c.fillRect(0, 0, W * (s / p.duration), u * .8); }
     if (p.voice && p.voiceAI) { c.font = `600 ${u * 2.3}px Inter, Arial`; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillStyle = 'rgba(0,0,0,.5)'; const t = 'AI-generated voice', w = c.measureText(t).width; c.beginPath(); c.roundRect(u * 3, u * 3, w + u * 3, u * 4.2, u); c.fill(); c.fillStyle = '#fff'; c.fillText(t, u * 4.5, u * 3.9); }

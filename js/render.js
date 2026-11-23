@@ -40,10 +40,26 @@
   function drawText(c, F, x, y, align) { c.textAlign = align; c.textBaseline = 'top'; F.lines.forEach((l, i) => c.fillText(l, x, y + i * F.lh)); }
   const luma = (h) => { const n = parseInt(h.slice(1), 16); return (0.299 * (n >> 16 & 255) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) / 255; };
   const onColor = (h) => luma(h) > 0.55 ? '#101114' : '#FFFFFF';
-  function button(c, text, x, y, u, align, accent) {
-    c.font = BODY(700)(u * 3.4); const tw = c.measureText(text).width, w = tw + u * 6, h = u * 7.4, left = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x;
-    c.fillStyle = accent; c.beginPath(); c.roundRect(left, y, w, h, h / 2); c.fill(); c.fillStyle = onColor(accent); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, left + w / 2, y + h * 0.53); return h;
+  /* Call-to-action button. With a project, it uses the chosen style and adds the contact line underneath. */
+  function button(c, text, x, y, u, align, accent, p, fg) {
+    const st = p && A.plan.premium() ? p.ctaStyle || 'pill' : 'pill', up = st === 'block', label = up ? String(text).toUpperCase() : String(text), arrowW = st === 'arrow' ? u * 4.2 : 0;
+    c.font = BODY(up ? 800 : 700)(u * 3.4); const tw = c.measureText(label).width, w = tw + u * 6 + arrowW, h = u * 7.4, left = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x, r = up ? u * 1.3 : h / 2;
+    c.save(); c.beginPath(); c.roundRect(left, y, w, h, r);
+    if (st === 'outline') { c.fillStyle = 'rgba(0,0,0,.32)'; c.fill(); c.lineWidth = u * .7; c.strokeStyle = accent; c.stroke(); c.fillStyle = '#FFFFFF'; } else { c.fillStyle = accent; c.fill(); c.fillStyle = onColor(accent); }
+    c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, left + (w - arrowW) / 2, y + h * 0.53);
+    if (arrowW) { const ax = left + w - u * 3.6, ay = y + h / 2; c.strokeStyle = c.fillStyle; c.lineWidth = u * .65; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath(); c.moveTo(ax - u * 2, ay); c.lineTo(ax, ay); c.moveTo(ax - u * .9, ay - u * 1.1); c.lineTo(ax, ay); c.lineTo(ax - u * .9, ay + u * 1.1); c.stroke(); }
+    c.restore(); const line = p && String(p.ctaHandle || '').trim(); if (!line) return h;
+    c.save(); c.font = BODY(600)(u * 3); c.textBaseline = 'top'; c.textAlign = align === 'center' ? 'center' : align === 'right' ? 'right' : 'left'; c.fillStyle = fg || '#FFFFFF'; if (!fg || fg.toUpperCase() === '#FFFFFF') { c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = u * 1.2; }
+    c.fillText(line, align === 'center' ? x : align === 'right' ? x : x, y + h + u * 2); c.restore(); return h + u * 6;
   }
+  /* Premium: a slim button bar shown through the whole video. */
+  A.drawCtaBar = (c, W, H, p, u, accent) => {
+    if (!A.plan.premium() || p.ctaShow !== 'always' || !p.cta) return; c.save(); const line = String(p.ctaHandle || p.brand || '').trim(), h = u * 9, y = H - h - u * 3, x = u * 4, w = W - u * 8;
+    c.fillStyle = 'rgba(0,0,0,.55)'; c.beginPath(); c.roundRect(x, y, w, h, u * 2); c.fill(); c.font = BODY(700)(u * 2.9); const bt = String(p.cta), bw = c.measureText(bt).width + u * 4.4, bh = u * 6, bx = x + w - bw - u * 1.5, by = y + (h - bh) / 2;
+    c.fillStyle = accent; c.beginPath(); c.roundRect(bx, by, bw, bh, bh / 2); c.fill(); c.fillStyle = onColor(accent); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(bt, bx + bw / 2, by + bh * .53);
+    if (line) { c.font = BODY(600)(u * 3); c.fillStyle = '#FFFFFF'; c.textAlign = 'left'; let t = line; while (t.length > 3 && c.measureText(t).width > bx - x - u * 5) t = t.slice(0, -2); if (t !== line) t = t.replace(/.$/, '…'); c.fillText(t, x + u * 3, y + h * .53); }
+    c.restore();
+  };
   function bg(c, W, H, p, t, im, scene) {
     c.save(); try { c.filter = A.lookFilter(p.look); } catch (e) {}
     if (im) cover(c, im, W, H, 1.02 + t * 0.09, (scene % 2 ? 1 : -1) * (t - .5) * .025); else A.art(p.template, c, W, H, t);
@@ -58,12 +74,12 @@
     c.save(); c.clearRect(0, 0, W, H); bg(c, W, H, p, t, im, 0);
     const head = String(p.headline || '').toUpperCase(), sub = p.sub || '', cta = p.cta || '';
     const block = (x, top, w, avail, align, fg) => {
-      const subH = sub ? u * 11 : 0, ctaH = cta ? u * 11 : 0, H1 = fit(c, head, HEAD, w, Math.max(u * 12, avail - subH - ctaH), land ? u * 19 : u * 16.5, u * 6, 1.08);
+      const handle = cta && String(p.ctaHandle || '').trim() ? u * 6 : 0, subH = sub ? u * 11 : 0, ctaH = cta ? u * 11 + handle : 0, H1 = fit(c, head, HEAD, w, Math.max(u * 12, avail - subH - ctaH), land ? u * 19 : u * 16.5, u * 6, 1.08);
       c.font = BODY(500)(u * 3.7); const SL = sub ? fit(c, sub, BODY(500), w, u * 10, u * 3.8, u * 2.7, 1.28) : { h: 0 };
-      const tot = H1.h + (sub ? SL.h + u * 2 : 0) + (cta ? u * 10 : 0); let y = top + Math.max(0, avail - tot);
+      const tot = H1.h + (sub ? SL.h + u * 2 : 0) + (cta ? u * 10 + handle : 0); let y = top + Math.max(0, avail - tot);
       c.fillStyle = fg; c.font = HEAD(H1.size); drawText(c, H1, x, y, align); y += H1.h + u * 2;
       if (sub) { c.font = BODY(500)(SL.size); c.fillStyle = fg; drawText(c, SL, x, y, align); y += SL.h + u * 2.6; }
-      if (cta) button(c, cta, x, y, u, align, accent);
+      if (cta) button(c, cta, x, y, u, align, accent, p, fg);
     };
     if (layout === 'split') {
       const pw = land ? W * .46 : W, ph = land ? H : H * .44, x = land ? 0 : 0, y = land ? 0 : H - ph, dark = T.dark;
@@ -104,12 +120,12 @@
     const me = list[i].media && A.media.els.get(list[i].media); c.save(); bg(c, W, H, p, (i * .27 + lt * .25) % 1, me || im, i);
     const g = c.createLinearGradient(0, H * .28, 0, H); g.addColorStop(0, 'rgba(0,0,0,.08)'); g.addColorStop(.55, 'rgba(0,0,0,.66)'); g.addColorStop(1, 'rgba(0,0,0,.9)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
     const inn = ease(lt * each / .45), out = i < list.length - 1 ? 1 - ease((lt * each - each + .22) / .22) : 1, a = inn * out; c.globalAlpha = a;
-    const avail = H * (W > H ? .52 : .3), base = H - m * 1.3 - (last ? u * 12 : 0), F = fit(c, String(list[i].text || '').toUpperCase(), HEAD, W - m * 2, avail, W > H ? u * 15 : u * 15.5, u * 6, 1.08), y = base - F.h + (1 - inn) * u * 8;
+    const avail = H * (W > H ? .52 : .3), base = H - m * 1.3 - (last ? u * 12 + (p.cta && String(p.ctaHandle || '').trim() ? u * 6 : 0) : 0) - (!last && A.plan.premium() && p.ctaShow === 'always' && p.cta ? u * 10 : 0), F = fit(c, String(list[i].text || '').toUpperCase(), HEAD, W - m * 2, avail, W > H ? u * 15 : u * 15.5, u * 6, 1.08), y = base - F.h + (1 - inn) * u * 8;
     c.fillStyle = '#fff'; c.font = HEAD(F.size); drawText(c, F, W / 2, y, 'center');
-    if (last && p.cta && p.cta !== list[i].text) button(c, p.cta, W / 2, base + u * 3, u, 'center', accent);
+    if (last && p.cta && p.cta !== list[i].text) button(c, p.cta, W / 2, base + u * 3, u, 'center', accent, p);
     else if (last && (p.brand || p.detail)) { c.font = BODY(600)(u * 3.9); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'top'; c.fillText(p.detail || p.brand, W / 2, base + u * 3); }
     if (p.detail && !last) { c.font = BODY(600)(u * 3.9); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.fillText(p.detail, W / 2, y - u * 2); }
-    c.globalAlpha = 1; if (p.brand) brandMark(c, p, W / 2, m * .9, u, '#fff', 'center'); A.drawLogo(c, W, H, p, u); A.drawMark(c, W, H, u);
+    c.globalAlpha = 1; if (!last) A.drawCtaBar(c, W, H, p, u, accent); if (p.brand) brandMark(c, p, W / 2, m * .9, u, '#fff', 'center'); A.drawLogo(c, W, H, p, u); A.drawMark(c, W, H, u);
     c.restore();
   };
   A.isVideo = (p) => p.type === 'video' || p.type === 'promo';

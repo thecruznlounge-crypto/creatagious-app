@@ -1,5 +1,5 @@
 /* Bump VERSION on every deploy, together with js/config.js. */
-const VERSION = '2.6.0';
+const VERSION = '2.7.0';
 const CACHE = 'creatagious-' + VERSION;
 const CORE = ['./','index.html','offline.html','privacy.html','terms.html','delete-account.html','manifest.webmanifest',
   'css/app.css','css/pages.css','js/config.js','js/store.js','js/premium.js','js/copy.js','js/art.js','js/render.js','js/content.js','js/planner.js','js/export.js','js/views.js','js/schedule.js','js/app.js',

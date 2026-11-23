@@ -1,7 +1,7 @@
 /* Edit this file for your deployment. Bump VERSION together with service-worker.js. */
 window.A = window.A || {};
 A.CONFIG = {
-  VERSION: '2.6.0',
+  VERSION: '2.7.0',
   SUPPORT_EMAIL: 'support@creatagious.com',
   // Optional server features. The app works without them, on-device and offline.
   AI_ENDPOINT: 'api/generate.php',

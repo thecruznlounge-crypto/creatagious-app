@@ -308,3 +308,4 @@ html[data-plan=premium] .top{border-bottom-color:var(--y)}
 .prow{gap:8px}.prow b{display:block}.prow small{display:block;color:var(--bar);font-size:12px;font-weight:700}.prow .btn{min-height:40px;padding:0 12px}
 .prow .ck{display:flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;border-radius:10px;border:1.500px solid var(--line2)}.prow .ck svg{width:18px;height:18px;opacity:.25}.prow .ck.on{background:var(--y);border-color:var(--y);color:var(--on)}.prow .ck.on svg{opacity:1}
 select.field{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--t3) 50%),linear-gradient(135deg,var(--t3) 50%,transparent 50%);background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.ctabox{display:grid;gap:8px}.ctabox .lbl{margin:4px 0 0}.chips.wrap{flex-wrap:wrap}
