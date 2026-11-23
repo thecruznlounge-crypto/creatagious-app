@@ -1,0 +1,6 @@
+# Server secrets and runtime data. Never commit these.
+api/secret.php
+api/data/
+.env
+.DS_Store
+Thumbs.db

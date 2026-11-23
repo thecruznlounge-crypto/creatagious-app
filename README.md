@@ -1,0 +1,62 @@
+# Creatagious PWA
+
+Vanilla HTML, CSS and JavaScript. No build step.
+
+## Deploy on cPanel
+1. Upload everything **except `store/`, `README.md` and `PLAY_STORE.md`** to the domain root (usually `public_html/`). Turn on "Show Hidden Files" so `.htaccess` and `.well-known/` upload.
+2. The site must run on HTTPS.
+3. On every update, change `VERSION` in **both** `service-worker.js` and `js/config.js`. Open apps then show "A new version is ready".
+
+## Connect AI (optional)
+1. Copy `api/secret.sample.php` to `api/secret.php` on the server.
+2. Add `ANTHROPIC_API_KEY`, `RUNWAY_API_KEY` and `ELEVENLABS_API_KEY`, and replace `CHANGE-THIS-TEST-CODE` with your own private Premium code. `.htaccess` blocks public access to this file. Never put keys in `js/`.
+3. Add prepaid credits to Runway and use a paid ElevenLabs plan for commercial rights.
+4. Open the app, go to **Profile > Check setup**, and fix anything marked with an X.
+5. Switch to Premium in **Profile > Test the app as**, then redeem your code. Paid AI will not run without it.
+
+Claude writes ad copy and handles the website search fallback. Runway creates AI images (`seedream5_flash`, 2 credits each) and 5-second video clips (`gemini_omni_flash_1.2` at 720p, 35 credits each; one Runway credit is $0.01). ElevenLabs creates AI voices. Models and daily limits are in `secret.php`. With the defaults, clips are capped at 5 per Premium code and 30 per day overall, about $10.50 a day at most. Without keys the app still writes copy on the device and from website content. PHP 7.4+ with cURL, DOM and mbstring is required for `api/`, and `api/data` must be writable.
+
+## Scheduling (Premium)
+Premium users can schedule ads they made, or upload their own finished videos and images, choose platforms (TikTok, Instagram, Facebook, YouTube Shorts, LinkedIn, Pinterest) and pick a date and time. The Schedule screen is in the menu and in each editor's Post tab.
+- **Reminders:** "Remind me" downloads a calendar file with an alert, so the phone's calendar reminds the user even when Creatagious is closed. While the app is open, due posts also appear in Notifications and, if allowed, as a system notification.
+- **Posting:** "Post now" prepares the file (videos are recorded first), copies the caption, and opens the phone's share sheet for each platform. On computers it downloads the file and opens the platform's upload page. Each platform is ticked off as it's posted.
+- **Storage:** schedules and uploaded files stay on the device, like projects, and are included in Export my data.
+- **Automatic posting (next):** needs accounts and server-side scheduling, plus approval from each platform. TikTok keeps posts from unaudited apps private, Instagram needs Business or Creator accounts and Meta app review, and YouTube keeps uploads from unverified projects private. Apply early, since reviews take weeks.
+
+## Website generation
+`api/scrape.php` reads the home page and up to three About, Services, Menu or Pricing pages. It uses page text, structured data and app data embedded in the page. The kit shows everything found so the user can choose what the ad uses. If a site blocks servers or renders only in the browser, Claude searches that domain only, and the kit labels the result and links its sources. If nothing can be read, the kit says why and lets the user type the details and add photos.
+
+## Voiceover
+Premium video projects have an **Add voiceover** button under Export. Users can record their voice, upload an audio file, or choose an AI voice.
+
+AI voices use ElevenLabs and need `ELEVENLABS_API_KEY` plus a Premium code. They count toward `VOICE_DAILY_CHARACTERS` and show an on-video "AI-generated voice" label.
+
+## Free and Premium
+Free has ads, a small watermark, classic videos up to 15 seconds and 720p. Premium unlocks content-style videos, photos or clips per scene, caption styles, fonts, looks, transitions, music moods, logo, voiceover, the full website kit, 60-second videos, 1080p, and no ads or watermark.
+
+**Before launch, set `PREMIUM_PREVIEW: false` in `js/config.js`.** While true, anyone can turn Premium on for testing.
+
+- Web sales: set `CHECKOUT_URL` and issue license codes. Add each code to `PREMIUM_CODES`, or its sha256 hash to `LICENSE_CODE_HASHES`, in `api/secret.php`.
+- Web ads: set `ADSENSE_CLIENT` and `ADSENSE_SLOT` after approval. Until then a Premium promo shows in those spots.
+- Paid AI is enforced on the server with signed Premium tokens issued from those codes. Other Premium tools are unlocked on the device. Google Play buyers do not receive a server token yet, so add Play purchase verification before selling AI features through Play.
+
+## What runs where
+| Feature | Works offline | Needs |
+|---|---|---|
+| Image ads, campaigns, video clips, editing, export | Yes | Nothing |
+| AI copy | No | `ANTHROPIC_API_KEY` in `api/secret.php` |
+| AI images and video clips | No | `RUNWAY_API_KEY` plus a Premium code |
+| Record or upload voiceover | Yes | Microphone permission for recording |
+| AI voiceover | No | `ELEVENLABS_API_KEY` plus a Premium code |
+| Website kit | No | PHP with cURL and DOM |
+| Report this result | Saved locally, sent when online | PHP |
+
+## Good to know
+- Content-style videos are built from the generated script plus the user's photos, clips, website images or drawn artwork. The app does not generate AI actors, photorealistic footage or AI voices yet.
+- Video records in real time, so a 30-second clip takes 30 seconds. Chrome saves MP4 where the device supports it, otherwise WebM. Test a clip from your target Android phone before launch.
+- The Home template and recent project thumbnails were cropped from your mockup. Replace `assets/img/*.webp` with full-size originals for sharper tablet display.
+- Projects are stored on each device. There are no accounts or cloud sync yet.
+- Analytics shows activity inside Creatagious, not reach or clicks from ad platforms.
+
+## Before launch
+Replace the bracketed items, including the ad and subscription notes, in `privacy.html` and `terms.html`, confirm `support@creatagious.com` (also in `js/config.js`), and have the legal pages reviewed.

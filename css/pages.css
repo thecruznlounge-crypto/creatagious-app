@@ -1,0 +1,7 @@
+@font-face{font-family:Inter;src:url(../assets/fonts/inter-Regular.woff) format("woff");font-weight:400;font-display:swap}
+@font-face{font-family:Inter;src:url(../assets/fonts/inter-Bold.woff) format("woff");font-weight:700;font-display:swap}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#0D0E12;font:400 16px/1.6 Inter,system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 56px}h1{font-size:30px;line-height:1.15;letter-spacing:-.02em;margin:18px 0 6px}h2{font-size:19px;margin:26px 0 4px}
+a{color:#087F90}.back{display:inline-flex;align-items:center;min-height:44px;font-weight:700;text-decoration:none;color:#0D0E12}.muted{color:#5D5E64}
+.btn{display:inline-flex;align-items:center;min-height:46px;padding:0 18px;border-radius:14px;background:#18D4E8;color:#0D0E12;font-weight:700;text-decoration:none}
+html[data-theme=dark] body{background:#0B1015;color:#F1F5F7}html[data-theme=dark] .back{color:#F1F5F7}html[data-theme=dark] .muted{color:#9EABB4}html[data-theme=dark] a{color:#6EEBF8}html[data-theme=dark] .btn{color:#04181D}

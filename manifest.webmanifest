@@ -1,0 +1,32 @@
+{
+  "id": "/",
+  "name": "Creatagious: AI Ad Maker",
+  "short_name": "Creatagious",
+  "description": "Create image ads, video clips and multi-format ad campaigns for social media from one short description.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "categories": ["business", "productivity", "photo"],
+  "icons": [
+    {"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "assets/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
+    {"src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+    {"src": "assets/icons/monochrome-512.png", "sizes": "512x512", "type": "image/png", "purpose": "monochrome"}
+  ],
+  "shortcuts": [
+    {"name": "Create an ad", "url": "./index.html#create", "icons": [{"src": "assets/icons/shortcut-create.png", "sizes": "96x96", "type": "image/png"}]},
+    {"name": "Projects", "url": "./index.html#projects", "icons": [{"src": "assets/icons/shortcut-projects.png", "sizes": "96x96", "type": "image/png"}]}
+  ],
+  "screenshots": [
+    {"src": "assets/screenshots/phone-home.png", "sizes": "1080x2340", "type": "image/png", "form_factor": "narrow", "label": "Home"},
+    {"src": "assets/screenshots/phone-editor.png", "sizes": "1080x2340", "type": "image/png", "form_factor": "narrow", "label": "Ad editor"},
+    {"src": "assets/screenshots/tablet-home.png", "sizes": "2560x1600", "type": "image/png", "form_factor": "wide", "label": "Tablet home"}
+  ]
+}
