@@ -45,10 +45,10 @@
     async slidesZip(p) { const files = []; for (const r of await A.exporter.slidePngs(p)) files.push({ name: r.name, data: new Uint8Array(await r.blob.arrayBuffer()) }); return { blob: zip(files), name: slug(p.name) + '-carousel.zip' }; },
     async packZip(pack) {
       const files = [], enc = new TextEncoder(); let notes = `${pack.name}\n`;
-      for (const it of pack.items) { const p = A.store.get(it.project); if (!p) continue; notes += `\n${it.name}\n${p.caption || ''}\n`; const dir = slug(it.name) + '/'; if (p.type === 'carousel') for (const r of await A.exporter.slidePngs(p)) files.push({ name: dir + r.name, data: new Uint8Array(await r.blob.arrayBuffer()) }); else if (!A.isVideo(p)) { const r = await A.exporter.png(p); files.push({ name: dir + r.name, data: new Uint8Array(await r.blob.arrayBuffer()) }); } else notes += '(Export this video from its editor.)\n'; }
+      for (const it of pack.items) { const p = A.store.get(it.project); if (!p) continue; notes += `\n${it.name}\n${A.capWithLink(p)}\n`; const dir = slug(it.name) + '/'; if (p.type === 'carousel') for (const r of await A.exporter.slidePngs(p)) files.push({ name: dir + r.name, data: new Uint8Array(await r.blob.arrayBuffer()) }); else if (!A.isVideo(p)) { const r = await A.exporter.png(p); files.push({ name: dir + r.name, data: new Uint8Array(await r.blob.arrayBuffer()) }); } else notes += '(Export this video from its editor.)\n'; }
       files.push({ name: 'captions.txt', data: enc.encode(notes) }); return { blob: zip(files), name: slug(pack.name) + '-pack.zip' };
     },
-    async shareFiles(list, p) { const files = list.map((r) => new File([r.blob], r.name, { type: r.blob.type })); if (navigator.canShare && navigator.canShare({ files })) { try { await navigator.share({ files, text: p.caption || '' }); } catch (e) { if (e.name === 'AbortError') return false; throw e; } p.exports = (p.exports || 0) + 1; A.store.upsert(p); A.store.log('export', { type: p.type, format: p.format, mode: 'share', project: p.id }); return true; } return null; },
+    async shareFiles(list, p) { const files = list.map((r) => new File([r.blob], r.name, { type: r.blob.type })); if (navigator.canShare && navigator.canShare({ files })) { try { await navigator.share({ files, text: A.capWithLink(p) }); } catch (e) { if (e.name === 'AbortError') return false; throw e; } p.exports = (p.exports || 0) + 1; A.store.upsert(p); A.store.log('export', { type: p.type, format: p.format, mode: 'share', project: p.id }); return true; } return null; },
     canVideo: () => !!(bestType() && HTMLCanvasElement.prototype.captureStream),
     video(p, onP) {
       return new Promise(async (res, rej) => {
@@ -70,7 +70,7 @@
     async deliver(file, mode, p) {
       const f = new File([file.blob], file.name, { type: file.blob.type });
       if (mode === 'share' && navigator.canShare && navigator.canShare({ files: [f] })) {
-        try { await navigator.share({ files: [f], text: p.caption || '' }); } catch (e) { if (e.name === 'AbortError') return false; throw e; }
+        try { await navigator.share({ files: [f], text: A.capWithLink(p) }); } catch (e) { if (e.name === 'AbortError') return false; throw e; }
       } else { save(file.blob, file.name); if (mode === 'share') A.toast('Saved. Sharing files is not available in this browser.'); }
       p.exports = (p.exports || 0) + 1; A.store.upsert(p); A.store.log('export', { type: p.type, format: p.format, mode, project: p.id });
       return true;

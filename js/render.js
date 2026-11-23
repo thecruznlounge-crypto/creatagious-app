@@ -52,6 +52,10 @@
     c.save(); c.font = BODY(600)(u * 3); c.textBaseline = 'top'; c.textAlign = align === 'center' ? 'center' : align === 'right' ? 'right' : 'left'; c.fillStyle = fg || '#FFFFFF'; if (!fg || fg.toUpperCase() === '#FFFFFF') { c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = u * 1.2; }
     c.fillText(line, align === 'center' ? x : align === 'right' ? x : x, y + h + u * 2); c.restore(); return h + u * 6;
   }
+  /* The website from the line under the button, if there is one. */
+  A.siteOf = (p) => { const m = String((p && p.ctaHandle) || '').match(/(^|[\s·|,(])((?:https?:\/\/)?(?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.[a-z]{2,}(?:\/[^\s·|,)]*)?)/i); return m ? m[2].replace(/[.,]+$/, '') : ''; };
+  /* Caption text with the website added, so the caption link matches the button. */
+  A.capWithLink = (p, text) => { const t = String(text != null ? text : (p && p.caption) || '').trim(), site = A.siteOf(p); if (!site) return t; const bare = site.replace(/^https?:\/\//i, '').replace(/^www\./i, '').toLowerCase(); if (t.toLowerCase().includes(bare)) return t; return (t ? t + '\n\n' : '') + (p.cta ? p.cta + ' 👉 ' : '') + site; };
   /* Premium: a slim button bar shown through the whole video. */
   A.drawCtaBar = (c, W, H, p, u, accent) => {
     if (!A.plan.premium() || p.ctaShow !== 'always' || !p.cta) return; c.save(); const line = String(p.ctaHandle || p.brand || '').trim(), h = u * 9, y = H - h - u * 3, x = u * 4, w = W - u * 8;
