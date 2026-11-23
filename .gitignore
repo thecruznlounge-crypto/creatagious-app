@@ -1,6 +1,6 @@
-# Server secrets and runtime data. Never commit these.
-api/secret.php
-api/data/
-.env
+# Local settings and secrets. Never commit these.
+.dev.vars
+.wrangler/
+node_modules/
 .DS_Store
 Thumbs.db

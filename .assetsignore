@@ -1,0 +1,9 @@
+_worker.js
+worker
+wrangler.jsonc
+.assetsignore
+.gitignore
+.git
+README.md
+PLAY_STORE.md
+node_modules

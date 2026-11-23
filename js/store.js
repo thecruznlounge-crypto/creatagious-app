@@ -30,7 +30,7 @@
       if (pr) S.profile = Object.assign(S.profile, pr);
       if (!seeded) { A.seed(); await tx('readwrite', (s) => s.put(true, 'seeded')); await S.saveAll(); }
     },
-    async put(k, v) { try { await tx('readwrite', (s) => s.put(v, k)); } catch (e) { A.toast && A.toast('Storage is full. Delete a project to free space.'); } },
+    async put(k, v) { if (k === 'posts' && A.push) A.push.later(); try { await tx('readwrite', (s) => s.put(v, k)); } catch (e) { A.toast && A.toast('Storage is full. Delete a project to free space.'); } },
     async read(k) { return tx('readonly', (s) => s.get(k)); },
     del(k) { return tx('readwrite', (s) => s.delete(k)); },
     saveAll() { return Promise.all([S.put('projects', S.projects), S.put('notes', S.notes), S.put('events', S.events), S.put('profile', S.profile), S.put('posts', S.posts)]); },

@@ -1,0 +1,37 @@
+// Cloudflare Workers config for Creatagious (the app's static files + the API in worker/)
+{
+  "name": "creatagious",
+  "main": "_worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    // only API calls reach the worker first; everything else is served straight from the files
+    "run_worker_first": ["/api/*"]
+  },
+  // Sends post reminders. Runs every minute.
+  "triggers": { "crons": ["* * * * *"] },
+  // Storage for limits, Premium tokens, clip jobs and reminders (D1 database "creatagious").
+  // Create it in Cloudflare, then paste its ID here.
+  "d1_databases": [{ "binding": "DB", "database_name": "creatagious", "database_id": "PASTE_D1_DATABASE_ID_HERE" }],
+  // Settings you can change. Keys go in Settings > Variables and Secrets as secrets, never here.
+  "vars": {
+    "CLAUDE_MODEL": "claude-haiku-5-5",
+    "RUNWAY_IMAGE_MODEL": "seedream5_flash",
+    "RUNWAY_VIDEO_MODEL": "gemini_omni_flash_1.2",
+    "RUNWAY_VIDEO_HEIGHT": "720",
+    "RUNWAY_VIDEO_SECONDS": "5",
+    "ELEVENLABS_MODEL": "eleven_v4",
+    "FREE_AI_COPY_PER_DAY": "3",
+    "PREMIUM_AI_COPY_PER_DAY": "100",
+    "AI_COPY_DAILY_LIMIT": "1000",
+    "FREE_SITE_SEARCHES_PER_DAY": "2",
+    "PREMIUM_SITE_SEARCHES_PER_DAY": "30",
+    "PREMIUM_AI_IMAGES_PER_DAY": "30",
+    "AI_IMAGES_DAILY_LIMIT": "200",
+    "PREMIUM_AI_VIDEOS_PER_DAY": "5",
+    "AI_VIDEOS_DAILY_LIMIT": "30",
+    "VOICE_DAILY_CHARACTERS": "20000"
+  },
+  "observability": { "enabled": true }
+}

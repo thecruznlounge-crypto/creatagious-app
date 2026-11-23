@@ -1,7 +1,7 @@
 /* Edit this file for your deployment. Bump VERSION together with service-worker.js. */
 window.A = window.A || {};
 A.CONFIG = {
-  VERSION: '2.7.1',
+  VERSION: '2.8.0',
   SUPPORT_EMAIL: 'support@creatagious.com',
   // Optional server features. The app works without them, on-device and offline.
   AI_ENDPOINT: 'api/generate.php',
@@ -16,7 +16,8 @@ A.CONFIG = {
   AI_TIMEOUT_MS: 55000,
   SCRAPE_TIMEOUT_MS: 75000,
   IMAGE_TIMEOUT_MS: 180000,
-  // Shown in the plan comparison. Keep these in step with api/secret.php.
+  PUSH_ENDPOINT: 'api/push.php',
+  // Shown in the plan comparison. Keep these in step with the Worker settings in wrangler.jsonc.
   FREE_AI_COPY_LABEL: '3 a day',
   PREMIUM_AI_COPY_LABEL: '100 a day',
   PREMIUM_AI_IMAGE_LABEL: '30 a day',
